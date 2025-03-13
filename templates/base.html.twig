@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Financial Tracker{% endblock %}</title>
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    {% if app.user %}
+        <a href="{{ path('dashboard') }}">Транзакции</a> |
+        <a href="{{ path('category_index') }}">Категории</a> |
+        <a href="{{ path('app_logout') }}">Выйти</a>
+    {% else %}
+        <a href="{{ path('app_login') }}">Войти</a> |
+        <a href="{{ path('app_register') }}">Регистрация</a>
+    {% endif %}
+    {% block body %}{% endblock %}
+</div>
+</body>
+</html>

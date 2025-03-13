@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактировать категорию{% endblock %}
+
+{% block body %}
+    <h1>Редактировать категорию</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    {{ form_row(form.isIncome) }}
+    <button type="submit" class="btn">Сохранить</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('category_index') }}">Назад</a>
+{% endblock %}

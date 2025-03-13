@@ -1,0 +1,42 @@
+security:
+    # Хеширование паролей
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # Провайдер пользователей
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    # Настройка файрволлов
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            custom_authenticator: App\Security\AppCustomAuthenticator  # Оставляем только один аутентификатор
+            logout:
+                path: app_logout
+                target: app_login  # После выхода перенаправляем на логин
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800  # 1 неделя
+                path: /
+
+    # Контроль доступа
+    access_control:
+        - { path: ^/dashboard, roles: ROLE_USER }  # Доступ к /dashboard только для авторизованных
+
+# Настройки для тестового окружения
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10

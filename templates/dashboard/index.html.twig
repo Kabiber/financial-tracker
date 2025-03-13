@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+    <h1>Ваши транзакции</h1>
+
+    <div class="stats">
+        <p>Доходы: <strong>{{ income|number_format(2, '.', ' ') }}</strong> руб.</p>
+        <p>Расходы: <strong>{{ expenses|number_format(2, '.', ' ') }}</strong> руб.</p>
+        <p>Баланс: <strong>{{ (income - expenses)|number_format(2, '.', ' ') }}</strong> руб.</p>
+    </div>
+
+    {% if transactions is empty %}
+        <p>У вас пока нет транзакций. <a href="{{ path('transaction_new') }}">Добавить первую?</a></p>
+    {% else %}
+        <table>
+            <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Сумма</th>
+                <th>Категория</th>
+                <th>Описание</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.date|date('Y-m-d') }}</td>
+                    <td>{{ transaction.amount|number_format(2, '.', ' ') }}</td>
+                    <td>{{ transaction.category.name }}</td>
+                    <td>{{ transaction.description|default('—') }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a href="{{ path('transaction_new') }}" class="btn">Добавить транзакцию</a>
+{% endblock %}
