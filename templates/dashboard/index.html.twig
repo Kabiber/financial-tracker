@@ -5,10 +5,26 @@
 {% block body %}
     <h1>Ваши транзакции</h1>
 
-    <div class="stats">
+    {{ form_start(filter_form, {'method': 'GET'}) }}
+    <div class="filter-form">
+        {{ form_row(filter_form.category) }}
+        {{ form_row(filter_form.isIncome) }}
+        {{ form_row(filter_form.startDate) }}
+        {{ form_row(filter_form.endDate) }}
+        <button type="submit" class="btn">Фильтровать</button>
+        <a href="{{ path('dashboard') }}" class="btn">Сбросить</a>
+        <button type="button" id="toggleChart" class="btn">Показать график</button>
+    </div>
+    {{ form_end(filter_form) }}
+
+    <div id="statsContainer" class="stats">
         <p>Доходы: <strong>{{ income|number_format(2, '.', ' ') }}</strong> руб.</p>
         <p>Расходы: <strong>{{ expenses|number_format(2, '.', ' ') }}</strong> руб.</p>
         <p>Баланс: <strong>{{ (income - expenses)|number_format(2, '.', ' ') }}</strong> руб.</p>
+    </div>
+
+    <div id="chartContainer" class="chart-container" style="display: none;">
+        <canvas id="transactionsChart" width="300" height="150"></canvas>
     </div>
 
     {% if transactions is empty %}
@@ -37,4 +53,54 @@
     {% endif %}
 
     <a href="{{ path('transaction_new') }}" class="btn">Добавить транзакцию</a>
+
+    <script>
+        // Инициализация графика
+        const ctx = document.getElementById('transactionsChart').getContext('2d');
+        let chart = null;
+        const chartData = {
+            type: 'bar',
+            data: {
+                labels: ['Доходы', 'Расходы'],
+                datasets: [{
+                    data: [{{ income }}, {{ expenses }}],
+                    backgroundColor: ['#28a745', '#dc3545'],
+                    borderColor: ['#28a745', '#dc3545'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        };
+
+        // Переключение между статистикой и графиком
+        const toggleButton = document.getElementById('toggleChart');
+        const statsContainer = document.getElementById('statsContainer');
+        const chartContainer = document.getElementById('chartContainer');
+
+        toggleButton.addEventListener('click', () => {
+            if (chartContainer.style.display === 'none') {
+                statsContainer.style.display = 'none';
+                chartContainer.style.display = 'block';
+                toggleButton.textContent = 'Показать статистику';
+                if (!chart) {
+                    chart = new Chart(ctx, chartData);
+                }
+            } else {
+                statsContainer.style.display = 'block';
+                chartContainer.style.display = 'none';
+                toggleButton.textContent = 'Показать график';
+            }
+        });
+    </script>
 {% endblock %}
