@@ -71,20 +71,41 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'category_delete', methods: ['POST'])]
+    #[Route('/category/{id}/delete', name: 'category_delete', methods: ['POST'])]
     public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Проверяем, что категория принадлежит текущему пользователю
         if ($category->getUser() !== $this->getUser()) {
             throw $this->createAccessDeniedException('Вы не можете удалить эту категорию.');
         }
-
-        if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($category);
-            $entityManager->flush();
-            $this->addFlash('success', 'Категория успешно удалена.');
+        // Проверяем CSRF-токен
+        if (!$this->isCsrfTokenValid('delete' . $category->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Неверный CSRF-токен.');
+            return $this->redirectToRoute('category_index');
         }
+        // Проверяем, есть ли транзакции с этой категорией
+        $transactionCount = $entityManager->getRepository(\App\Entity\Transaction::class)
+            ->createQueryBuilder('t')
+            ->select('COUNT(t.id)')
+            ->where('t.category = :category')
+            ->setParameter('category', $category)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if ($transactionCount > 0) {
+            $this->addFlash('warning', sprintf('Нельзя удалить категорию "%s", так как она используется в %d транзакци%s.',
+                $category->getName(),
+                $transactionCount,
+                $transactionCount === 1 ? 'и' : 'ях'
+            ));
+            return $this->redirectToRoute('category_index');
+        }
+
+        $entityManager->remove($category);
+        $entityManager->flush();
+        $this->addFlash('success', 'Категория успешно удалена.');
 
         return $this->redirectToRoute('category_index');
     }

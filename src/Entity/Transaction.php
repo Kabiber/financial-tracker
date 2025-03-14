@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'transactions')]
@@ -17,17 +18,19 @@ class Transaction
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: 'transactions')]
+    #[ORM\ManyToOne(targetEntity: Category::class)]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
-    #[ORM\Column(type: 'float')]
+    #[ORM\Column(type: 'decimal', scale: 2, nullable: true)]
+    #[Assert\NotBlank(message: "Пожалуйста, укажите сумму транзакции.")]
     private ?float $amount = null;
 
     #[ORM\Column(type: 'text', nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(type: 'datetime')]
+    #[ORM\Column(type: 'datetime', nullable: true)]
+    #[Assert\NotBlank(message: "Пожалуйста, укажите дату транзакции.")]
     private ?\DateTimeInterface $date = null;
 
     public function getId(): ?int

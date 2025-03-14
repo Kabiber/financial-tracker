@@ -68,7 +68,7 @@
                         <td><input type="checkbox" name="transactions[]" value="{{ transaction.id }}" class="transactionCheckbox" style="display: none;"></td>
                         <td>{{ transaction.date|date('Y-m-d') }}</td>
                         <td>{{ transaction.amount|number_format(2, '.', ' ') }}</td>
-                        <td>{{ transaction.category.name }}</td>
+                        <td>{{ transaction.category ? transaction.category.name : 'Без категории' }}</td>
                         <td>{{ transaction.description|default('—') }}</td>
                         <td>
                             <a href="{{ path('transaction_edit', {'id': transaction.id}) }}" class="btn btn-sm btn-outline-primary editButton" style="display: none;">

@@ -22,6 +22,7 @@ class TransactionType extends AbstractType
             ->add('amount', NumberType::class, [
                 'label' => 'Сумма',
                 'scale' => 2,
+                'required' => false,
                 'attr' => ['placeholder' => 'Введите сумму'],
             ])
             ->add('description', TextType::class, [
@@ -32,6 +33,7 @@ class TransactionType extends AbstractType
             ->add('date', DateTimeType::class, [
                 'label' => 'Дата',
                 'widget' => 'single_text',
+                'required' => false,
                 'attr' => ['placeholder' => 'Выберите дату'],
             ])
             ->add('category', EntityType::class, [
@@ -39,6 +41,7 @@ class TransactionType extends AbstractType
                 'choice_label' => 'name',
                 'label' => 'Категория',
                 'placeholder' => 'Выберите категорию',
+                'required' => true,
                 'query_builder' => function (\Doctrine\ORM\EntityRepository $er) use ($user) {
                     return $er->createQueryBuilder('c')
                         ->where('c.user = :user')

@@ -50,12 +50,13 @@ class DashboardController extends AbstractController
         $expenses = 0;
         $categoriesData = [];
         foreach ($pagination as $transaction) {
-            if ($transaction->getCategory()->isIncome()) {
+            $category = $transaction->getCategory();
+            if ($category && $category->isIncome()) {
                 $income += $transaction->getAmount();
             } else {
                 $expenses += $transaction->getAmount();
             }
-            $categoryName = $transaction->getCategory()->getName();
+            $categoryName = $category ? $category->getName() : 'Без категории';
             $categoriesData[$categoryName] = ($categoriesData[$categoryName] ?? 0) + $transaction->getAmount();
         }
 
@@ -114,12 +115,21 @@ class DashboardController extends AbstractController
         ]);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($transaction);
-            $entityManager->flush();
-            $this->addFlash('success', 'Транзакция успешно создана.');
-
-            return $this->redirectToRoute('dashboard');
+        if ($form->isSubmitted()) {
+            if ($form->isValid()) {
+                $entityManager->persist($transaction);
+                $entityManager->flush();
+                $this->addFlash('success', 'Транзакция успешно создана.');
+                return $this->redirectToRoute('dashboard');
+            } else {
+                // Выводим предупреждения для конкретных полей
+                if (!$form->get('amount')->getData()) {
+                    $this->addFlash('warning', 'Пожалуйста, укажите сумму транзакции.');
+                }
+                if (!$form->get('date')->getData()) {
+                    $this->addFlash('warning', 'Пожалуйста, укажите дату транзакции.');
+                }
+            }
         }
 
         return $this->render('dashboard/new.html.twig', [
@@ -136,13 +146,14 @@ class DashboardController extends AbstractController
             throw $this->createAccessDeniedException('Вы не можете редактировать эту транзакцию.');
         }
 
-        $form = $this->createForm(TransactionType::class, $transaction);
+        $form = $this->createForm(TransactionType::class, $transaction, [
+            'user' => $this->getUser(), // Передаём текущего пользователя
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
             $this->addFlash('success', 'Транзакция успешно обновлена.');
-
             return $this->redirectToRoute('dashboard');
         }
 
