@@ -19,7 +19,9 @@ class DashboardController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $form = $this->createForm(TransactionFilterType::class);
+        $form = $this->createForm(TransactionFilterType::class, null, [
+            'user' => $this->getUser(),
+        ]);
         $form->handleRequest($request);
 
         $qb = $entityManager->getRepository(Transaction::class)

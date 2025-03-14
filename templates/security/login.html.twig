@@ -2,35 +2,129 @@
 
 {% block title %}Вход{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-card {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 350px;
+            position: relative;
+            z-index: 1;
+        }
+        .auth-card h1 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .auth-card .form-label {
+            color: #34495e;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .auth-card .form-control {
+            border: 1px solid #dfe6e9;
+            border-radius: 5px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .auth-card .form-control:focus {
+            border-color: #1abc9c;
+            box-shadow: 0 0 5px rgba(26, 188, 156, 0.3);
+            outline: none;
+        }
+        .auth-card .input-group-text {
+            background: #f5f7fa;
+            border: 1px solid #dfe6e9;
+            border-right: none;
+            color: #1abc9c;
+            border-radius: 5px 0 0 5px;
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+        .auth-card .form-check-label {
+            font-size: 0.9rem;
+            color: #34495e;
+        }
+        .auth-card .btn-primary {
+            background: #1abc9c;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+        .auth-card .btn-primary:hover {
+            background: #16a085;
+        }
+        .auth-card .link-primary {
+            color: #1abc9c;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .auth-card .link-primary:hover {
+            text-decoration: underline;
+        }
+        .bg-shape {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(26, 188, 156, 0.1);
+            border-radius: 50%;
+            filter: blur(50px);
+        }
+        .bg-shape-1 { top: -100px; left: -100px; }
+        .bg-shape-2 { bottom: -100px; right: -100px; }
+    </style>
+{% endblock %}
+
 {% block body %}
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <h1 class="mb-4 text-center">Вход</h1>
+    <div class="auth-container">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="auth-card">
+            <h1 class="text-center">Вход</h1>
 
             {% if error %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
-                </div>
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
             {% endif %}
 
-            <form method="post" class="needs-validation" novalidate>
+            <form method="post" action="{{ path('app_login') }}">
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
                 <div class="mb-3">
-                    <label for="inputEmail" class="form-label">Email</label>
+                    <label for="email" class="form-label">Email</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                        <input type="email" name="email" id="inputEmail" class="form-control" value="{{ last_username }}" placeholder="example@domain.com" required>
+                        <input type="email" value="{{ last_username }}" name="email" id="email" class="form-control" placeholder="example@domain.com" required autofocus>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="inputPassword" class="form-label">Пароль</label>
+                    <label for="password" class="form-label">Пароль</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Введите пароль" required>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Введите пароль" required>
                     </div>
                 </div>
 
-                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember_me" name="_remember_me">
+                    <label class="form-check-label" for="remember_me">Запомнить меня</label>
+                </div>
 
                 <div class="d-grid">
                     <button type="submit" class="btn btn-primary"><i class="bi bi-box-arrow-in-right"></i> Войти</button>

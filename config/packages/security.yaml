@@ -18,18 +18,21 @@ security:
         main:
             lazy: true
             provider: app_user_provider
-            custom_authenticator: App\Security\AppCustomAuthenticator  # Оставляем только один аутентификатор
+            custom_authenticator: App\Security\AppCustomAuthenticator
             logout:
                 path: app_logout
-                target: app_login  # После выхода перенаправляем на логин
+                target: app_login
             remember_me:
                 secret: '%kernel.secret%'
-                lifetime: 604800  # 1 неделя
+                lifetime: 604800
                 path: /
 
     # Контроль доступа
     access_control:
-        - { path: ^/dashboard, roles: ROLE_USER }  # Доступ к /dashboard только для авторизованных
+        - { path: ^/$, roles: PUBLIC_ACCESS }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/dashboard, roles: ROLE_USER }
 
 # Настройки для тестового окружения
 when@test:
