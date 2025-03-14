@@ -4,11 +4,10 @@ namespace App\Form;
 
 use App\Entity\Category;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class CategoryType extends AbstractType
 {
@@ -17,12 +16,9 @@ class CategoryType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Название',
-                'constraints' => [
-                    new NotBlank(['message' => 'Название не может быть пустым']),
-                ],
             ])
             ->add('isIncome', CheckboxType::class, [
-                'label' => 'Это доход?',
+                'label' => 'Доход',
                 'required' => false,
             ]);
     }

@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Редактировать транзакцию{% endblock %}
+
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <h1 class="mb-4 text-center">Редактировать транзакцию</h1>
+
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+            {% endfor %}
+
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': ''}}) }}
+            <div class="mb-3">
+                {{ form_label(form.amount, 'Сумма', {'label_attr': {'class': 'form-label'}}) }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-currency-ruble"></i></span>
+                    {{ form_widget(form.amount, {'attr': {'class': 'form-control', 'placeholder': 'Введите сумму'}}) }}
+                </div>
+                {{ form_errors(form.amount) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.description, 'Описание', {'label_attr': {'class': 'form-label'}}) }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-pencil"></i></span>
+                    {{ form_widget(form.description, {'attr': {'class': 'form-control', 'placeholder': 'Введите описание'}}) }}
+                </div>
+                {{ form_errors(form.description) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.date, 'Дата', {'label_attr': {'class': 'form-label'}}) }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar"></i></span>
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                {{ form_errors(form.date) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.category, 'Категория', {'label_attr': {'class': 'form-label'}}) }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                    {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+                </div>
+                {{ form_errors(form.category) }}
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Сохранить</button>
+                <a href="{{ path('dashboard') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Назад к списку</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

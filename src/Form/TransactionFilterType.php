@@ -16,6 +16,7 @@ class TransactionFilterType extends AbstractType
     {
         $builder
             ->add('category', EntityType::class, [
+                'label' => 'Категории',
                 'class' => Category::class,
                 'choice_label' => 'name',
                 'placeholder' => 'Все категории',

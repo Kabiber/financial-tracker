@@ -3,13 +3,41 @@
 {% block title %}Редактировать категорию{% endblock %}
 
 {% block body %}
-    <h1>Редактировать категорию</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <h1 class="mb-4 text-center">Редактировать категорию</h1>
 
-    {{ form_start(form) }}
-    {{ form_row(form.name) }}
-    {{ form_row(form.isIncome) }}
-    <button type="submit" class="btn">Сохранить</button>
-    {{ form_end(form) }}
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success" role="alert">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger" role="alert">{{ message }}</div>
+            {% endfor %}
 
-    <a href="{{ path('category_index') }}">Назад</a>
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': ''}}) }}
+            <div class="mb-3">
+                {{ form_label(form.name, 'Название', {'label_attr': {'class': 'form-label'}}) }}
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                    {{ form_widget(form.name, {'attr': {'class': 'form-control', 'placeholder': 'Введите название'}}) }}
+                </div>
+                {{ form_errors(form.name) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.isIncome, 'Тип', {'label_attr': {'class': 'form-label'}}) }}
+                <div class="form-check">
+                    {{ form_widget(form.isIncome, {'attr': {'class': 'form-check-input'}}) }}
+                    {{ form_label(form.isIncome, 'Доход (если не отмечено — расход)', {'label_attr': {'class': 'form-check-label'}}) }}
+                </div>
+                {{ form_errors(form.isIncome) }}
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Сохранить</button>
+                <a href="{{ path('category_index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Назад к списку</a>
+            </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %}
